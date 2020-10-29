@@ -17,21 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pluckchord import PluckMusic
-from typing import Array
+from musica.pluckchord import PluckMusic
+from typing import Tuple
+from re import match
 
 
 class Conversor(object):
     """
-    Convert between strings or Array of notes into a PluckMusic
+    Convert between a string or a list of notes into a PluckMusic
     """
     def __init__(self, tempo=90):
         self.pluckmusic = PluckMusic(tempo)
 
     def _parse_note(self, s: str) -> Tuple[str, int]:
-        pass
-        
-    def from_array(self, arr: Array[str]):
-        for notestr in arr:
-            note = notestr
-            self.pluckmusic.add_note2(note, length)
+        result = match(r'(\w{1,3}\d)(\d)', s)
+        return (result[1], int(result[2]))
+
+    def from_list(self, arr: list):
+        for note_str in arr:
+            note = self._parse_note(note_str)
+            self.pluckmusic.add_note2(note[0], note[1])
+
+    def from_string(self, score: str):
+        self.from_list(score.split(" "))
