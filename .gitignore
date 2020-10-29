@@ -1,2 +1,5 @@
 myexamples/**
 *~
+*.wav
+*#*
+__pycache__
