@@ -44,6 +44,10 @@ class Conversor(object):
         # Too much code... isn't it? Should I use a new class for this? naaaah!
         result = match(r'([#A-Za-z]+)(\d?)(\d?)', s)
 
+        if result is None:
+            # It does not match!
+            return None
+
         if result[2] == "":
             scale = self._current_scale
         else:
@@ -55,22 +59,15 @@ class Conversor(object):
             # TODO: A try catch here...
             duration = int(result[3])
 
-        if result is not None:
-            # Keep the scale for the next notes
-            self._current_scale = scale
-            self._current_duration = duration
+        # Keep the scale for the next notes
+        self._current_scale = scale
+        self._current_duration = duration
 
-            return (result[1] + scale, duration)
-        else:
-            return None
+        return (result[1] + scale, duration)
 
     def _parse_from_list(self, arr: List[str]) -> list:
-        lst = []
-        for note_str in arr:
-            note = self._parse_note(note_str)
-            if note is not None:
-                lst.append(note)
-        return lst
+        return [self._parse_note(note_str) for note_str in arr
+                if self._parse_note(note_str) is not None]
 
     def from_list(self, arr: list):
         self.lst_notes = self._parse_from_list(arr)
