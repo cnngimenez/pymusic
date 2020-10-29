@@ -33,10 +33,12 @@ class PluckNote:
         'ff': 1
     }
 
-    def __init__(self, notename, length, dynamic: str = 'mp'):
+    def __init__(self, notename, length, dynamic: str = 'mp',
+                 wave: str = 'pluck'):
         self.notename = notename
         self.length = length
         self.dynamic = dynamic
+        self.wave = wave
 
         if notename == "" or notename[0] == "s":
             self.note = None
@@ -60,8 +62,20 @@ class PluckNote:
         dynamic = self.DYMANIC_VALUES[self.dynamic]
 
         if self.note is not None:
-            pluck += source.pluck(self.note, duration)
+            pluck += self._get_source(self.note, duration)
         return pluck * dynamic
+
+    def _get_source(self, note, duration):
+        if self.wave == 'pluck':
+            return source.pluck(note, duration)
+        elif self.wave == 'sine':
+            return source.sine(note, duration)
+        elif self.wave == 'square':
+            return source.square(note, duration)
+        elif self.wave == 'sawtooth':
+            return source.sawtooth(note, duration)
+        else:
+            return source.silence(duration)
 
 
 class PluckChord:
@@ -69,18 +83,19 @@ class PluckChord:
     :author Christian Gimenez:
     :license GPLv3:
     """
-    
+
     # These values colud be different from PluckNote
     DYMANIC_VALUES = {
         'pp': 0.1,
         'p': 0.25,
-        'mp': 0.35,
-        'mf': 0.5,
-        'f': 0.75,
+        'mp': 0.45,
+        'mf': 0.65,
+        'f': 0.85,
         'ff': 1
     }
 
-    def __init__(self, chordname, length, dynamic: str = 'mp'):
+    def __init__(self, chordname, length, dynamic: str = 'mp',
+                 wave: str = 'pluck'):
         """
         :param chordname: A string with the chord root note. For example: c3
         :param length: A number: 1, 2, 4, 8, 16, 32, ... 4 means quarter note.
@@ -88,6 +103,7 @@ class PluckChord:
         self.chordname = chordname
         self.length = length
         self.dynamic = dynamic
+        self.wave = wave
 
         if chordname == "" or chordname[0] == "s":
             self.chord = None
@@ -115,8 +131,22 @@ class PluckChord:
 
         if self.chord is not None:
             for i in self.chord.notes:
-                pluck += source.pluck(i, duration)
-        return pluck * dynamic
+                pluck += self._get_source(i, duration) * dynamic
+        return pluck
+
+    def _get_source(self, note, duration):
+        # Sorry for the copy-paste!!! time flies!
+
+        if self.wave == 'pluck':
+            return source.pluck(note, duration)
+        elif self.wave == 'sine':
+            return source.sine(note, duration)
+        elif self.wave == 'square':
+            return source.square(note, duration)
+        elif self.wave == 'sawtooth':
+            return source.sawtooth(note, duration)
+        else:
+            return source.silence(duration)
 
 
 class PluckMusic:
@@ -141,15 +171,17 @@ class PluckMusic:
     def add_note(self, note: PluckNote):
         self.notes.append(note)
 
-    def add_note2(self, notename: str, length: int, dynamic: str = 'mp'):
-        note = PluckNote(notename, length, dynamic)
+    def add_note2(self, notename: str, length: int, dynamic: str = 'mp',
+                  wave: str = 'pluck'):
+        note = PluckNote(notename, length, dynamic, wave)
         self.notes.append(note)
 
     def add_chord(self, chord: PluckChord):
         self.chords.append(chord)
 
-    def add_chord2(self, chordname: str, length: float, dynamic: str = 'mp'):
-        chord = PluckChord(chordname, length, dynamic)
+    def add_chord2(self, chordname: str, length: float, dynamic: str = 'mp',
+                   wave: str = 'pluck'):
+        chord = PluckChord(chordname, length, dynamic, wave)
         self.chords.append(chord)
 
     def get_duration(self) -> float:
@@ -170,7 +202,7 @@ class PluckMusic:
         '''
         Generate the sound data from the chords and notes.
 
-        :return: A numpy.ndarray of bytes. 
+        :return: A numpy.ndarray of bytes.
         '''
         # Generate a blank music to fill with notes.
         out = source.silence(self.get_duration() + 1)
