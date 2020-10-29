@@ -30,13 +30,29 @@ class Conversor(object):
         self.pluckmusic = PluckMusic(tempo)
 
     def _parse_note(self, s: str) -> Tuple[str, int]:
-        result = match(r'(\w{1,3}\d)(\d)', s)
+        result = match(r'([#\w]{1,3}\d)(\d)', s)
         return (result[1], int(result[2]))
 
-    def from_list(self, arr: list):
+    def _parse_from_list(self, arr: list) -> list:
+        lst = []
         for note_str in arr:
             note = self._parse_note(note_str)
+            lst.append(note)
+        return lst
+
+    def from_list(self, arr: list):
+        lst_notes = self._parse_from_list(arr)
+        print(lst_notes)
+        for note in lst_notes:
             self.pluckmusic.add_note2(note[0], note[1])
 
     def from_string(self, score: str):
         self.from_list(score.split(" "))
+
+    def chord_from_list(self, arr: list):
+        lst_chords = self._parse_from_list(arr)
+        for chord in lst_chords:
+            self.pluckmusic.add_chord2(chord[0], chord[1])
+
+    def chord_from_string(self, chords: str):
+        self.chord_from_list(chords.split(" "))
