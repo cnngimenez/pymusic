@@ -17,7 +17,7 @@ pip install --user  -r requirements.txt
 # Uso
 
 ```python
-from musica import Conversor
+from musica.conversor import Conversor
 
 c = Conversor()
 c.from_string("C34 D34 E34 F34 G34 A34 B34 C34")
