@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from musical.theory import Chord, Note
-from musical.audio import source, playback
+from musical.audio import source, playback, save
 from math import ceil
 
 
@@ -27,7 +27,7 @@ class PluckNote:
         self.notename = notename
         self.length = length
 
-        if notename == "":
+        if notename == "" or notename[0] == "s":
             self.note = None
         else:
             self.note = Note(notename)
@@ -49,7 +49,7 @@ class PluckNote:
 
         if self.note is not None:
             pluck += source.pluck(self.note, duration)
-        return pluck
+        return pluck * 0.35
 
 
 class PluckChord:
@@ -66,7 +66,7 @@ class PluckChord:
         self.chordname = chordname
         self.length = length
 
-        if chordname == "":
+        if chordname == "" or chordname[0] == "s":
             self.chord = None
         else:
             if chordname[0].islower():
@@ -92,7 +92,7 @@ class PluckChord:
         if self.chord is not None:
             for i in self.chord.notes:
                 pluck += source.pluck(i, duration)
-        return pluck
+        return pluck * 0.25
 
 
 class PluckMusic:
@@ -109,6 +109,9 @@ class PluckMusic:
         self.notes = []
 
     def get_beat_duration(self) -> float:
+        '''
+        Get the duration of each beat in seconds.
+        '''
         return 60 / self.tempo
 
     def add_note(self, note: PluckNote):
@@ -139,7 +142,12 @@ class PluckMusic:
 
         return max(total_chords, total_notes)
 
-    def render(self):
+    def render(self) -> 'numpy.ndarray':
+        '''
+        Generate the sound data from the chords and notes.
+
+        :return: A numpy.ndarray of bytes. 
+        '''
         # Generate a blank music to fill with notes.
         out = source.silence(self.get_duration() + 1)
         print(f"Max. bytes: {len(out)}")
@@ -174,7 +182,24 @@ class PluckMusic:
         return out
 
     def play(self, renew=False):
+        '''
+        Play the music data.
+
+        :param renew: Optional (false). Regenerate the sound data?
+        '''
         if not renew and self.last_render is not None:
             playback.pyaudio_play(self.last_render)
         else:
             playback.pyaudio_play(self.render())
+
+    def save(self, path: str, renew: bool = False):
+        '''
+        Save a WAV file with the generated sound data.
+
+        :param path: The WAV file path.
+        :param renew: Optional (false by default). Regenerate the sound data?
+        '''
+        if not renew and self.last_render is not None:
+            save.save_wave(self.last_render, path)
+        else:
+            save.save_wave(self.render(), path)
