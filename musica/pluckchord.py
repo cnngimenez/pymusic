@@ -1,4 +1,4 @@
-# pluckchord ---
+# pluckchord.py ---
 
 # Copyright 2020 cnngimenez
 
@@ -27,9 +27,9 @@ class PluckNote:
     DYMANIC_VALUES = {
         'pp': 0.1,
         'p': 0.25,
-        'mp': 0.35,
-        'mf': 0.5,
-        'f': 0.75,
+        'mp': 0.45,
+        'mf': 0.65,
+        'f': 0.85,
         'ff': 1
     }
 
