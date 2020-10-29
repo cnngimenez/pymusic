@@ -99,9 +99,12 @@ class Conversor(object):
         pass
 
     def get_musical_notes(self) -> List[Note]:
-        # TODO
-        pass
+        '''
+        Return the musical.theory.Note instances.
+
+        Create instances of Note for the melody.
+        '''
+        return [Note(note_tuple[0]) for note_tuple in self.lst_notes]
 
     def get_musical_chords(self) -> List[Chord]:
-        # TODO
-        pass
+        return [Chord(chord_tuple[0]) for chord_tuple in self.lst_chords]
