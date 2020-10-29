@@ -1,18 +1,18 @@
 from musica.conversor import Conversor
 
-chords = "C21 G21 C21 G21 "
-chords += "C21 G21 C21 G23 C28 C22 "
-chords += "G22 C22 G22 C22 G22 a22 D22 G22 "
-chords += "C21 G21 C21 G23 C28 C22"
+chords = "C21/p G C G "
+chords += "C G C G23 C28 C22 "
+chords += "G C G C G a D G "
+chords += "C21 G C G23 C28 C22"
 
-himno = "E32 F34 G34 G34 F34 E34 D34 C34 C34 D34 E34 E33 D38 D32 "
-himno += "E32 F34 G34 G34 F34 E34 D34 C34 C34 D34 E34 D33 C38 C32 "
-himno += "D32 E34 C34 D34 E38 F38 E34 C34 D34 E38 F38 E34 D34 C34 D34 G22 "
-himno += "E32 F34 G34 G34 F34 E34 D34 C34 C34 D34 E34 D33 C38 C32"
+himno = "E32/pp F34 G | G/p F E D | C/mp C D E | E33/mf D38 D32 "
+himno += "E32/f F34 G | G/ff F E D | C C D E | D33 C38 C32 "
+himno += "D32/p E34 C | D/ff E38 F E34 C | D E38 F E34 D | C D G22 "
+himno += "E32/mp F34 G | G F E D | C C D E | D33 C38 C32"
 
 
 c = Conversor(110)
 c.from_string(himno)
 c.chord_from_string(chords)
-c.pluckmusic.render()
-c.pluckmusic.play()
+pm = c.get_pluckmusic()
+pm.play()
