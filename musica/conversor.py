@@ -24,17 +24,21 @@ from re import match
 
 
 class Conversor(object):
-    """
+    '''
     Convert between a string or a list of notes into a PluckMusic
-    """
+    '''
+
+    NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d?)(/(f|ff|mf|mp|p|pp))?'
+
     def __init__(self, tempo=90):
         self.tempo = tempo
         self.lst_chords = []
         self.lst_notes = []
         self._current_scale = 3
         self._current_duration = 4  # a quarter ("negra" en castellano)
+        self._current_dynamic = "mp"
 
-    def _parse_note(self, s: str) -> Tuple[str, int]:
+    def _parse_note(self, s: str) -> Tuple[str, int, str]:
         '''
         Parse a note string.
 
@@ -42,7 +46,7 @@ class Conversor(object):
             None if it couldn't be interpreted.
         '''
         # Too much code... isn't it? Should I use a new class for this? naaaah!
-        result = match(r'([#A-Za-z]+)(\d?)(\d?)', s)
+        result = match(self.NOTE_REGEX, s)
 
         if result is None:
             # It does not match!
@@ -59,11 +63,17 @@ class Conversor(object):
             # TODO: A try catch here...
             duration = int(result[3])
 
+        if result[5] == "" or result[5] is None:
+            dynamic = self._current_dynamic
+        else:
+            dynamic = result[5]
+
         # Keep the scale for the next notes
         self._current_scale = scale
         self._current_duration = duration
+        self._current_dynamic = dynamic
 
-        return (result[1] + scale, duration)
+        return (result[1] + scale, duration, dynamic)
 
     def _parse_from_list(self, arr: List[str]) -> list:
         return [self._parse_note(note_str) for note_str in arr
@@ -85,9 +95,9 @@ class Conversor(object):
         pm = PluckMusic(self.tempo)
 
         for note in self.lst_notes:
-            self.pluckmusic.add_note2(note[0], note[1])
+            pm.add_note2(note[0], note[1], note[2])
         for chord in self.lst_chords:
-            self.pluckmusic.add_chord2(chord[0], chord[1])
+            pm.add_chord2(chord[0], chord[1], note[2])
 
         return pm
 

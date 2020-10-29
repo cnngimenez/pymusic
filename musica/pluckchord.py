@@ -23,9 +23,20 @@ from math import ceil
 
 
 class PluckNote:
-    def __init__(self, notename, length):
+
+    DYMANIC_VALUES = {
+        'pp': 0.1,
+        'p': 0.25,
+        'mp': 0.35,
+        'mf': 0.5,
+        'f': 0.75,
+        'ff': 1
+    }
+
+    def __init__(self, notename, length, dynamic: str = 'mp'):
         self.notename = notename
         self.length = length
+        self.dynamic = dynamic
 
         if notename == "" or notename[0] == "s":
             self.note = None
@@ -46,10 +57,11 @@ class PluckNote:
     def render(self, tempo):
         duration = self.get_duration(tempo)
         pluck = source.silence(duration)
+        dynamic = self.DYMANIC_VALUES[self.dynamic]
 
         if self.note is not None:
             pluck += source.pluck(self.note, duration)
-        return pluck * 0.35
+        return pluck * dynamic
 
 
 class PluckChord:
@@ -57,14 +69,25 @@ class PluckChord:
     :author Christian Gimenez:
     :license GPLv3:
     """
+    
+    # These values colud be different from PluckNote
+    DYMANIC_VALUES = {
+        'pp': 0.1,
+        'p': 0.25,
+        'mp': 0.35,
+        'mf': 0.5,
+        'f': 0.75,
+        'ff': 1
+    }
 
-    def __init__(self, chordname, length):
+    def __init__(self, chordname, length, dynamic: str = 'mp'):
         """
         :param chordname: A string with the chord root note. For example: c3
         :param length: A number: 1, 2, 4, 8, 16, 32, ... 4 means quarter note.
         """
         self.chordname = chordname
         self.length = length
+        self.dynamic = dynamic
 
         if chordname == "" or chordname[0] == "s":
             self.chord = None
@@ -88,11 +111,12 @@ class PluckChord:
     def render(self, tempo):
         duration = self.get_duration(tempo)
         pluck = source.silence(duration)
+        dynamic = self.DYMANIC_VALUES[self.dynamic]
 
         if self.chord is not None:
             for i in self.chord.notes:
                 pluck += source.pluck(i, duration)
-        return pluck * 0.25
+        return pluck * dynamic
 
 
 class PluckMusic:
@@ -117,15 +141,15 @@ class PluckMusic:
     def add_note(self, note: PluckNote):
         self.notes.append(note)
 
-    def add_note2(self, notename: str, length: int):
-        note = PluckNote(notename, length)
+    def add_note2(self, notename: str, length: int, dynamic: str = 'mp'):
+        note = PluckNote(notename, length, dynamic)
         self.notes.append(note)
 
     def add_chord(self, chord: PluckChord):
         self.chords.append(chord)
 
-    def add_chord2(self, chordname: str, length: float):
-        chord = PluckChord(chordname, length)
+    def add_chord2(self, chordname: str, length: float, dynamic: str = 'mp'):
+        chord = PluckChord(chordname, length, dynamic)
         self.chords.append(chord)
 
     def get_duration(self) -> float:
