@@ -38,7 +38,7 @@ class Conversor(object):
         self._current_duration = 4  # a quarter ("negra" en castellano)
         self._current_dynamic = "mp"
 
-    def _parse_note(self, s: str) -> Tuple[str, int, str]:
+    def _parse_note(self, s: str) -> Tuple[str, int, int, str]:
         '''
         Parse a note string.
 
@@ -55,7 +55,7 @@ class Conversor(object):
         if result[2] == "":
             scale = self._current_scale
         else:
-            scale = result[2]
+            scale = int(result[2])
 
         if result[3] == "":
             duration = self._current_duration
@@ -73,7 +73,7 @@ class Conversor(object):
         self._current_duration = duration
         self._current_dynamic = dynamic
 
-        return (result[1] + scale, duration, dynamic)
+        return (result[1], scale, duration, dynamic)
 
     def _parse_from_list(self, arr: List[str]) -> list:
         return [self._parse_note(note_str) for note_str in arr
@@ -95,15 +95,18 @@ class Conversor(object):
         pm = PluckMusic(self.tempo)
 
         for note in self.lst_notes:
-            pm.add_note2(note[0], note[1], note[2])
+            pm.add_note2(note[0] + str(note[1]), note[2], note[3])
         for chord in self.lst_chords:
-            pm.add_chord2(chord[0], chord[1], note[2])
+            pm.add_chord2(chord[0] + str(note[1]), chord[2], note[3])
 
         return pm
 
     def get_lilypond(self) -> str:
-        # TODO
-        pass
+        s = "\\version \"2.20.0\"\n{\n"
+        for note in self.lst_notes:
+            s += note[0]
+        s += "\n}"
+        return s
 
     def get_musical_notes(self) -> List[Note]:
         '''
