@@ -1,4 +1,4 @@
-# conversor ---
+# conversor.py ---
 
 # Copyright 2020 cnngimenez
 
@@ -28,7 +28,7 @@ class Conversor(object):
     Convert between a string or a list of notes into a PluckMusic
     '''
 
-    NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d?)(/(f|ff|mf|mp|p|pp))?'
+    NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d?)(/(ff|f|mf|mp|pp|p))?(\!(\w+))?'
 
     def __init__(self, tempo=90):
         self.tempo = tempo
@@ -37,8 +37,9 @@ class Conversor(object):
         self._current_scale = 3
         self._current_duration = 4  # a quarter ("negra" en castellano)
         self._current_dynamic = "mp"
+        self._current_wave = "pluck"
 
-    def _parse_note(self, s: str) -> Tuple[str, int, int, str]:
+    def _parse_note(self, s: str) -> Tuple[str, int, int, str, str]:
         '''
         Parse a note string.
 
@@ -68,12 +69,18 @@ class Conversor(object):
         else:
             dynamic = result[5]
 
+        if result[7] == "" or result[7] is None:
+            wave = self._current_wave
+        else:
+            wave = result[7]
+
         # Keep the scale for the next notes
         self._current_scale = scale
         self._current_duration = duration
         self._current_dynamic = dynamic
+        self._current_wave = wave
 
-        return (result[1], scale, duration, dynamic)
+        return (result[1], scale, duration, dynamic, wave)
 
     def _parse_from_list(self, arr: List[str]) -> list:
         return [self._parse_note(note_str) for note_str in arr
@@ -95,9 +102,10 @@ class Conversor(object):
         pm = PluckMusic(self.tempo)
 
         for note in self.lst_notes:
-            pm.add_note2(note[0] + str(note[1]), note[2], note[3])
+            pm.add_note2(note[0] + str(note[1]), note[2], note[3], note[4])
         for chord in self.lst_chords:
-            pm.add_chord2(chord[0] + str(note[1]), chord[2], note[3])
+            pm.add_chord2(chord[0] + str(chord[1]), chord[2], chord[3],
+                          chord[4])
 
         return pm
 
