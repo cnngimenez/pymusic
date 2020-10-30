@@ -109,10 +109,42 @@ class Conversor(object):
 
         return pm
 
+    def _get_lilynote(self, note: Tuple) -> str:
+        s = note[0].lower()  # note
+        s += "'" * (note[1] - 2)  # pitch
+        # duration
+        if note[2] in [1, 2, 4, 8, 16, 32, 64]:
+            s += str(note[2])
+        return s
+
+    def _get_lilychord(self, chord: Tuple) -> str:
+        s = chord[0].lower()  # note
+        # duration
+        if chord[2] in [1, 2, 4, 8, 16, 32, 64]:
+            s += str(chord[2])
+
+        if chord[0].islower():
+            s += ":m"
+
+        return s
+
     def get_lilypond(self) -> str:
         s = "\\version \"2.20.0\"\n{\n"
+        s += f"\\tempo 4 = {self.tempo}\n"
+
+        s += '\n<<\n'
+
+        s += '\n{\n'
         for note in self.lst_notes:
-            s += note[0]
+            s += self._get_lilynote(note) + " "
+        s += '\n}\n'
+
+        s += "\n\\chords{\n"
+        for chord in self.lst_chords:
+            s += self._get_lilychord(chord) + " "
+        s += "\n}"
+
+        s += '\n>>\n'
         s += "\n}"
         return s
 
