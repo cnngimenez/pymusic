@@ -1,0 +1,11 @@
+e316 d#316 | e3 d#3 e3 b2 d3 c3 | a28 s216 c2 e2 a2 | b28 s216 e2 g#2 b2 | c38 s216 e2 e3 d#3 | e3 d#3 e3 b2 d3 c3 |
+a28 s216 c2 e2 a2 | b28 s216 e2 c3 b2 | a24  
+
+e316 d#316 | e3 d#3 e3 b2 d3 c3 | a28 s216 c2 e2 a2 | b28 s216 e2 g#2 b2 | c38 s216 e2 e3 d#3 | e3 d#3 e3 b2 d3 c3 |
+a28 s216 c2 e2 a2 | b28 s216 e2 c3 b2 | a28 s216 b2 c316 d3 | 
+
+e36 g216 f3 e3 | d36 f216 e3 d3 |
+c36 e216 d3 c3 | b28 s216 e216 e3 e1 | e2 e3 e4 d#2 e2 d#3 | e38 d#216 d#3 e3 d#3 |  e316 d#3 e3 b2 d3 c3
+
+a28 s216 c2 e2 a2 | b28 s216 e2 g#2 b2 | c38 s216 e2 e3 d#3 | e3 d#3 e3 b2 d3 c3 | a28 s216 c2 e2 a2
+b28 s216 e2 c3 b2 | a24
