@@ -28,7 +28,7 @@ class Conversor(object):
     Convert between a string or a list of notes into a PluckMusic
     '''
 
-    NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d?)(/(ff|f|mf|mp|pp|p))?(\!(\w+))?'
+    NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d+)?(/(ff|f|mf|mp|pp|p))?(\!(\w+))?'
 
     def __init__(self, tempo=90):
         self.tempo = tempo
@@ -52,13 +52,13 @@ class Conversor(object):
         if result is None:
             # It does not match!
             return None
-
+        print(s, result.groups())
         if result[2] == "":
             scale = self._current_scale
         else:
             scale = int(result[2])
 
-        if result[3] == "":
+        if result[3] == "" or result[3] is None:
             duration = self._current_duration
         else:
             # TODO: A try catch here...
@@ -90,13 +90,15 @@ class Conversor(object):
         self.lst_notes = self._parse_from_list(arr)
 
     def from_string(self, score: str):
-        self.from_list(score.split(" "))
+        s = score.replace("\n", " ")
+        self.from_list(s.split(" "))
 
     def chord_from_list(self, arr: list):
         self.lst_chords = self._parse_from_list(arr)
 
     def chord_from_string(self, chords: str):
-        self.chord_from_list(chords.split(" "))
+        s = chords.replace("\n", " ")
+        self.chord_from_list(s.split(" "))
 
     def get_pluckmusic(self) -> PluckMusic:
         pm = PluckMusic(self.tempo)
@@ -158,3 +160,18 @@ class Conversor(object):
 
     def get_musical_chords(self) -> List[Chord]:
         return [Chord(chord_tuple[0]) for chord_tuple in self.lst_chords]
+
+
+def tocar_cancion(cancion: str, tempo: int = 90) -> Conversor:
+    '''
+    Tocar la canción con el tempo designado.
+
+    Interpretar el string en notas musicales y generar los sonidos. Luego,
+    reproducir el audio.
+    :param cancion: El string con las partitura.
+    :param tempo: El tiempo (bps) de la canción. Por defecto es 90.
+    '''
+    c = Conversor(tempo)
+    c.from_string(cancion)
+    pm = c.get_pluckmusic()
+    pm.play()
