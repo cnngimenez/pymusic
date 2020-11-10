@@ -175,3 +175,4 @@ def tocar_cancion(cancion: str, tempo: int = 90) -> Conversor:
     c.from_string(cancion)
     pm = c.get_pluckmusic()
     pm.play()
+    return c
