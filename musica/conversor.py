@@ -174,7 +174,9 @@ class Conversor(object):
         return [Chord(chord_tuple[0]) for chord_tuple in self.lst_chords]
 
 
-def tocar_cancion(cancion: str, tempo: int = 90) -> Conversor:
+def tocar_cancion(cancion: str,
+                  tempo: int = 90,
+                  chords: str = "") -> Conversor:
     '''
     Tocar la canción con el tempo designado.
 
@@ -185,6 +187,33 @@ def tocar_cancion(cancion: str, tempo: int = 90) -> Conversor:
     '''
     c = Conversor(tempo)
     c.from_string(cancion)
+    c.chord_from_string(chords)
     pm = c.get_pluckmusic()
     pm.play()
+    return c
+
+
+def guardar_cancion(path: str,
+                    cancion: str,
+                    tempo: int = 90,
+                    chords: str = "") -> Conversor:
+    c = Conversor(tempo)
+    c.from_string(cancion)
+    c.chord_from_string(chords)
+    pm = c.get_pluckmusic()
+    pm.save(path)
+    return c
+
+
+def generar_lilypond(path: str,
+                     cancion: str,
+                     tempo: int = 90,
+                     chords: str = "") -> Conversor:
+    c = Conversor(tempo)
+    c.from_string(cancion)
+    c.chord_from_string(chords)
+    s = c.get_lilypond()
+    f = open(path, 'w')
+    f.write(s)
+    f.close()
     return c
