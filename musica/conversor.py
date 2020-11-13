@@ -36,7 +36,7 @@ class Conversor(object):
         'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f',
         'sol': 'g', 'la': 'a', 'si': 'b'
     }
-    
+
     def __init__(self, tempo=90):
         self.tempo = tempo
         self.lst_chords = []
@@ -102,6 +102,10 @@ class Conversor(object):
         self.lst_notes = self._parse_from_list(arr)
 
     def from_string(self, score: str):
+        if (score[0:3].isdecimal()):
+            self.tempo = int(score[0:3])
+            score = score[3:]
+
         s = score.replace("\n", " ")
         self.from_list(s.split(" "))
 
