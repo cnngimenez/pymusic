@@ -30,6 +30,13 @@ class Conversor(object):
 
     NOTE_REGEX = r'([#A-Za-z]+)(\d?)(\d+)?(/(ff|f|mf|mp|pp|p))?(\!(\w+))?'
 
+    NOTE_NAMES = {
+        'DO': 'C', 'RE': 'D', 'MI': 'E', 'FA': 'F',
+        'SOL': 'G', 'LA': 'A', 'SI': 'B',
+        'do': 'c', 're': 'd', 'mi': 'e', 'fa': 'f',
+        'sol': 'g', 'la': 'a', 'si': 'b'
+    }
+    
     def __init__(self, tempo=90):
         self.tempo = tempo
         self.lst_chords = []
@@ -80,7 +87,12 @@ class Conversor(object):
         self._current_dynamic = dynamic
         self._current_wave = wave
 
-        return (result[1], scale, duration, dynamic, wave)
+        if result[1] in self.NOTE_NAMES:
+            notename = self.NOTE_NAMES[result[1]]
+        else:
+            notename = result[1]
+
+        return (notename, scale, duration, dynamic, wave)
 
     def _parse_from_list(self, arr: List[str]) -> list:
         return [self._parse_note(note_str) for note_str in arr
